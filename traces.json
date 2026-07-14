@@ -193,6 +193,55 @@
               "evidence": {"kind": "run_command", "value": "python3 -m json.tool traces.json >/dev/null && git add traces.json && git commit --amend --no-edit && git push --force-with-lease origin main && git status --short", "result": "Trace JSON validated; amended commit e10ffbf was force-with-lease pushed to origin/main with a clean status"}
             }
           ]
+        },
+        {
+          "id": "3.5",
+          "label": "Publish the terminal-resize stability update",
+          "children": [
+            {
+              "id": "3.5.1",
+              "label": "git add README.md tree_todo/app.py tests/test_app.py traces.json && git commit -m \"Handle terminal resize safely\" && git push && git status --short",
+              "evidence": {"kind": "run_command", "value": "git add README.md tree_todo/app.py tests/test_app.py traces.json && git commit -m \"Handle terminal resize safely\" && git push && git status --short", "result": "Created commit 31ac1ee and pushed main to origin"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "4",
+      "label": "Keep the TUI stable while terminal dimensions change",
+      "children": [
+        {
+          "id": "4.1",
+          "label": "Render against live screen dimensions, clip writes, and redraw after resize events",
+          "evidence": {"kind": "modify_file", "value": "tree_todo/app.py", "file_changes": [{"path": "tree_todo/app.py", "action": "modify", "additions": 47, "deletions": 12}]}
+        },
+        {
+          "id": "4.2",
+          "label": "Cover rendering safely in one-row and narrow terminal windows",
+          "evidence": {"kind": "create_file", "value": "tests/test_app.py", "file_changes": [{"path": "tests/test_app.py", "action": "create", "additions": 20, "deletions": 0}]}
+        },
+        {
+          "id": "4.3",
+          "label": "Verify resize behavior and module compilation",
+          "children": [
+            {
+              "id": "4.3.1",
+              "label": "uv run pytest && uv run python -m compileall -q tree_todo",
+              "evidence": {"kind": "run_command", "value": "uv run pytest && uv run python -m compileall -q tree_todo", "result": "8 tests passed; compilation completed successfully"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5",
+      "label": "Keep end-user documentation focused on using the application",
+      "children": [
+        {
+          "id": "5.1",
+          "label": "Remove uv installation and GitHub publishing instructions from the user README",
+          "evidence": {"kind": "modify_file", "value": "README.md", "file_changes": [{"path": "README.md", "action": "modify", "additions": 1, "deletions": 25}]}
         }
       ]
     }

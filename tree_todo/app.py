@@ -19,26 +19,61 @@ class App:
     def restore(self, source, target):
         if not source: return
         target.append(self.tree.snapshot()); self.tree = TodoTree.restore(source.pop()); self.cursor = min(self.cursor, max(0, len(self.tree.visible()) - 1))
+
+    @staticmethod
+    def _write(screen, row: int, text: str, width: int) -> None:
+        """Write a clipped line; curses raises if a resize invalidates a cell."""
+        if width <= 0: return
+        try: screen.addnstr(row, 0, text, max(0, width - 1))
+        except curses.error: pass
+
     def prompt(self, screen, label: str) -> str:
-        curses.echo(); screen.addstr(curses.LINES - 1, 0, label); screen.clrtoeol(); screen.refresh()
-        value = screen.getstr(curses.LINES - 1, len(label)).decode().strip(); curses.noecho(); return value
+        height, width = screen.getmaxyx()
+        if height < 2 or width <= len(label): return ""
+        row, column = height - 1, len(label)
+        curses.echo()
+        try:
+            self._write(screen, row, label, width); screen.clrtoeol(); screen.refresh()
+            return screen.getstr(row, column, width - column - 1).decode().strip()
+        except curses.error:
+            return ""
+        finally:
+            curses.noecho()
     def mutate(self, operation):
         self.remember(); result = operation()
         if result is False: self.undo_stack.pop()
         else: save(self.tree)
         return result
+
+    def draw(self, screen) -> list:
+        """Render against the current dimensions, including very small windows."""
+        height, width = screen.getmaxyx()
+        try: screen.erase()
+        except curses.error: return []
+        if height <= 0 or width <= 0: return []
+        self._write(screen, 0, "tree-todo", width)
+        visible = self.tree.visible()
+        task_rows = max(0, height - 2)  # header plus a help line when possible
+        for i, item in enumerate(visible[:task_rows]):
+            state = {"incomplete": "[ ]", "partial": "[-]", "complete": "[x]"}[item.task.state]
+            branch = "▾ " if item.task.children and item.task.id in self.tree.expanded else "▸ " if item.task.children else "  "
+            prefix = ">" if i == self.cursor else " "
+            self._write(screen, i + 1, f"{prefix}{'  ' * item.depth}{branch}{state} {item.task.title}", width)
+        if height >= 2: self._write(screen, height - 1, HELP, width)
+        try: screen.refresh()
+        except curses.error: pass
+        return visible
+
     def run(self, screen):
-        curses.curs_set(0); screen.keypad(True)
+        try: curses.curs_set(0)
+        except curses.error: pass
+        screen.keypad(True)
         while True:
-            screen.erase(); screen.addnstr(0, 0, "tree-todo", curses.COLS - 1)
-            visible = self.tree.visible()
-            for i, item in enumerate(visible[:curses.LINES - 3]):
-                state = {"incomplete": "[ ]", "partial": "[-]", "complete": "[x]"}[item.task.state]
-                branch = "▾ " if item.task.children and item.task.id in self.tree.expanded else "▸ " if item.task.children else "  "
-                prefix = ">" if i == self.cursor else " "
-                screen.addnstr(i + 1, 0, f"{prefix}{'  ' * item.depth}{branch}{state} {item.task.title}", curses.COLS - 1)
-            screen.addnstr(curses.LINES - 2, 0, HELP, curses.COLS - 1); screen.refresh()
-            key = screen.get_wch(); selected = self.selected()
+            visible = self.draw(screen)
+            try: key = screen.get_wch()
+            except curses.error: continue
+            if key == curses.KEY_RESIZE: continue
+            selected = self.selected()
             if key == 'q': return
             if key in ('j', curses.KEY_DOWN): self.cursor = min(self.cursor + 1, max(0, len(visible) - 1))
             elif key in ('k', curses.KEY_UP): self.cursor = max(0, self.cursor - 1)
