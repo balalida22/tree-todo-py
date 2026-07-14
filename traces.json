@@ -1,0 +1,200 @@
+{
+  "atml": "1.0",
+  "tree": [
+    {
+      "id": "1",
+      "label": "Deliver a minimal tree-based terminal todo application",
+      "children": [
+        {
+          "id": "1.1",
+          "label": "Define the installable uv-managed Python project",
+          "children": [
+            {
+              "id": "1.1.1",
+              "label": "Add project metadata, console entry point, pytest configuration, and build backend",
+              "evidence": {"kind": "create_file", "value": "pyproject.toml", "file_changes": [{"path": "pyproject.toml", "action": "create", "additions": 18, "deletions": 0}]}
+            },
+            {
+              "id": "1.1.2",
+              "label": "Lock the uv-managed environment",
+              "evidence": {"kind": "create_file", "value": "uv.lock", "file_changes": [{"path": "uv.lock", "action": "create", "additions": 79, "deletions": 0}]}
+            },
+            {
+              "id": "1.1.3",
+              "label": "Document launch command, data location, and keyboard controls",
+              "evidence": {"kind": "create_file", "value": "README.md", "file_changes": [{"path": "README.md", "action": "create", "additions": 11, "deletions": 0}]}
+            },
+            {
+              "id": "1.1.4",
+              "label": "Initialize the tree_todo package",
+              "evidence": {"kind": "create_file", "value": "tree_todo/__init__.py", "file_changes": [{"path": "tree_todo/__init__.py", "action": "create", "additions": 1, "deletions": 0}]}
+            }
+          ]
+        },
+        {
+          "id": "1.2",
+          "label": "Implement tree state and durable interchange formats",
+          "children": [
+            {
+              "id": "1.2.1",
+              "label": "Implement task hierarchy, derived completion states, visible-node flattening, and mutations",
+              "evidence": {"kind": "create_file", "value": "tree_todo/model.py", "file_changes": [{"path": "tree_todo/model.py", "action": "create", "additions": 121, "deletions": 0}]}
+            },
+            {
+              "id": "1.2.2",
+              "label": "Persist versioned snapshots under the XDG data directory and support JSON interchange",
+              "evidence": {"kind": "create_file", "value": "tree_todo/persistence.py", "file_changes": [{"path": "tree_todo/persistence.py", "action": "create", "additions": 29, "deletions": 0}]}
+            },
+            {
+              "id": "1.2.3",
+              "label": "Convert between task trees and indented Markdown checklists",
+              "evidence": {"kind": "create_file", "value": "tree_todo/markdown.py", "file_changes": [{"path": "tree_todo/markdown.py", "action": "create", "additions": 29, "deletions": 0}]}
+            }
+          ]
+        },
+        {
+          "id": "1.3",
+          "label": "Provide interactive navigation and editing",
+          "children": [
+            {
+              "id": "1.3.1",
+              "label": "Connect curses rendering, Vim-style commands, automatic saves, imports/exports, and undo/redo",
+              "evidence": {"kind": "create_file", "value": "tree_todo/app.py", "file_changes": [{"path": "tree_todo/app.py", "action": "create", "additions": 69, "deletions": 0}]}
+            }
+          ]
+        },
+        {
+          "id": "1.4",
+          "label": "Verify tree behavior and file conversions",
+          "children": [
+            {
+              "id": "1.4.1",
+              "label": "Cover hierarchy changes and derived completion",
+              "evidence": {"kind": "create_file", "value": "tests/test_model.py", "file_changes": [{"path": "tests/test_model.py", "action": "create", "additions": 29, "deletions": 0}]}
+            },
+            {
+              "id": "1.4.2",
+              "label": "Cover versioned JSON save and load behavior",
+              "evidence": {"kind": "create_file", "value": "tests/test_persistence.py", "file_changes": [{"path": "tests/test_persistence.py", "action": "create", "additions": 14, "deletions": 0}]}
+            },
+            {
+              "id": "1.4.3",
+              "label": "Cover Markdown tree parsing and export",
+              "evidence": {"kind": "create_file", "value": "tests/test_markdown.py", "file_changes": [{"path": "tests/test_markdown.py", "action": "create", "additions": 8, "deletions": 0}]}
+            },
+            {
+              "id": "1.4.4",
+              "label": "Run the unit test suite",
+              "children": [
+                {
+                  "id": "1.4.4.1",
+                  "label": "uv run pytest",
+                  "evidence": {"kind": "run_command", "value": "uv run pytest", "result": "6 passed in 0.02s"}
+                }
+              ]
+            },
+            {
+              "id": "1.4.5",
+              "label": "Compile the application modules",
+              "children": [
+                {
+                  "id": "1.4.5.1",
+                  "label": "uv run python -m compileall -q tree_todo && rg --files | sort && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/atml-1.0.md && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/authoring-guide.md",
+                  "evidence": {"kind": "run_command", "value": "uv run python -m compileall -q tree_todo && rg --files | sort && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/atml-1.0.md && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/authoring-guide.md", "result": "compileall completed without output"}
+                }
+              ]
+            },
+            {
+              "id": "1.4.6",
+              "label": "Run final behavior, compilation, and trace validation",
+              "children": [
+                {
+                  "id": "1.4.6.1",
+                  "label": "uv run pytest && uv run python -m compileall -q tree_todo && uv run python -m json.tool traces.json >/dev/null",
+                  "evidence": {"kind": "run_command", "value": "uv run pytest && uv run python -m compileall -q tree_todo && uv run python -m json.tool traces.json >/dev/null", "result": "7 passed in 0.01s; compilation and JSON validation completed successfully"}
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "1.5",
+          "label": "Record the completed implementation evidence map",
+          "children": [
+            {
+              "id": "1.5.1",
+              "label": "Create the ATML evidence map for this implementation",
+              "evidence": {"kind": "create_file", "value": "traces.json", "file_changes": [{"path": "traces.json", "action": "create", "additions": null, "deletions": 0}]}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "label": "Prepare first-release installation and publication guidance",
+      "children": [
+        {
+          "id": "2.1",
+          "label": "Document uv installation, project launch, use, development checks, and GitHub publication",
+          "evidence": {"kind": "modify_file", "value": "README.md", "file_changes": [{"path": "README.md", "action": "modify", "additions": null, "deletions": null}]}
+        },
+        {
+          "id": "2.2",
+          "label": "Check whether the project has a Git repository before publishing",
+          "children": [
+            {
+              "id": "2.2.1",
+              "label": "sed -n '1,220p' README.md && git rev-parse --is-inside-work-tree 2>&1 || true",
+              "evidence": {"kind": "run_command", "value": "sed -n '1,220p' README.md && git rev-parse --is-inside-work-tree 2>&1 || true", "result": "README was read; Git reported that the directory is not a repository"}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "label": "Publish a clean initial GitHub release",
+      "children": [
+        {
+          "id": "3.1",
+          "label": "Exclude generated Python environments, test caches, and bytecode from version control",
+          "evidence": {"kind": "create_file", "value": ".gitignore", "file_changes": [{"path": ".gitignore", "action": "create", "additions": 4, "deletions": 0}]}
+        },
+        {
+          "id": "3.2",
+          "label": "Initialize the repository, commit the application, and configure its GitHub SSH remote",
+          "children": [
+            {
+              "id": "3.2.1",
+              "label": "git init && git add README.md pyproject.toml uv.lock tree_todo tests traces.json && git status --short && git commit -m \"Initial tree-todo release\" && git branch -M main && git remote add origin git@github.com:balalida22/tree-todo-py.git && git remote -v",
+              "evidence": {"kind": "run_command", "value": "git init && git add README.md pyproject.toml uv.lock tree_todo tests traces.json && git status --short && git commit -m \"Initial tree-todo release\" && git branch -M main && git remote add origin git@github.com:balalida22/tree-todo-py.git && git remote -v", "result": "Created the initial commit, renamed its branch to main, and configured origin"}
+            }
+          ]
+        },
+        {
+          "id": "3.3",
+          "label": "Amend the release without generated caches and push main to GitHub",
+          "children": [
+            {
+              "id": "3.3.1",
+              "label": "git rm -r --cached tests/__pycache__ tree_todo/__pycache__ && git add .gitignore && git commit --amend --no-edit && git push -u origin main",
+              "evidence": {"kind": "run_command", "value": "git rm -r --cached tests/__pycache__ tree_todo/__pycache__ && git add .gitignore && git commit --amend --no-edit && git push -u origin main", "result": "Amended release 3c78a5e and pushed main to git@github.com:balalida22/tree-todo-py.git"}
+            }
+          ]
+        },
+        {
+          "id": "3.4",
+          "label": "Validate the trace and synchronize the amended release branch",
+          "children": [
+            {
+              "id": "3.4.1",
+              "label": "python3 -m json.tool traces.json >/dev/null && git add traces.json && git commit --amend --no-edit && git push --force-with-lease origin main && git status --short",
+              "evidence": {"kind": "run_command", "value": "python3 -m json.tool traces.json >/dev/null && git add traces.json && git commit --amend --no-edit && git push --force-with-lease origin main && git status --short", "result": "Trace JSON validated; amended commit e10ffbf was force-with-lease pushed to origin/main with a clean status"}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

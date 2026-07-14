@@ -1,0 +1,18 @@
+[project]
+name = "tree-todo"
+version = "0.1.0"
+description = "A minimal tree-based terminal todo application"
+requires-python = ">=3.11"
+
+[project.scripts]
+tree-todo = "tree_todo.app:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
