@@ -204,6 +204,17 @@
               "evidence": {"kind": "run_command", "value": "git add README.md tree_todo/app.py tests/test_app.py traces.json && git commit -m \"Handle terminal resize safely\" && git push && git status --short", "result": "Created commit 31ac1ee and pushed main to origin"}
             }
           ]
+        },
+        {
+          "id": "3.6",
+          "label": "Publish high-priority task highlighting",
+          "children": [
+            {
+              "id": "3.6.1",
+              "label": "git add README.md tree_todo/model.py tree_todo/app.py tests/test_app.py tests/test_model.py tests/test_persistence.py traces.json && git commit -m \"Add high-priority task highlighting\" && git push && git status --short",
+              "evidence": {"kind": "run_command", "value": "git add README.md tree_todo/model.py tree_todo/app.py tests/test_app.py tests/test_model.py tests/test_persistence.py traces.json && git commit -m \"Add high-priority task highlighting\" && git push && git status --short", "result": "Created commit 1a181ac and pushed main to origin"}
+            }
+          ]
         }
       ]
     },
@@ -242,6 +253,69 @@
           "id": "5.1",
           "label": "Remove uv installation and GitHub publishing instructions from the user README",
           "evidence": {"kind": "modify_file", "value": "README.md", "file_changes": [{"path": "README.md", "action": "modify", "additions": 1, "deletions": 25}]}
+        }
+      ]
+    },
+    {
+      "id": "6",
+      "label": "Let users mark unfinished tasks as high priority",
+      "children": [
+        {
+          "id": "6.1",
+          "label": "Persist toggleable task highlights and clear them when completion is reached",
+          "evidence": {"kind": "modify_file", "value": "tree_todo/model.py", "file_changes": [{"path": "tree_todo/model.py", "action": "modify", "additions": 10, "deletions": 1}]}
+        },
+        {
+          "id": "6.2",
+          "label": "Render priority lines with a marker and terminal emphasis behind the p key",
+          "evidence": {"kind": "modify_file", "value": "tree_todo/app.py", "file_changes": [{"path": "tree_todo/app.py", "action": "modify", "additions": 7, "deletions": 4}]}
+        },
+        {
+          "id": "6.3",
+          "label": "Cover highlight toggling, automatic removal, and parent completion",
+          "evidence": {"kind": "modify_file", "value": "tests/test_model.py", "file_changes": [{"path": "tests/test_model.py", "action": "modify", "additions": 12, "deletions": 0}]}
+        },
+        {
+          "id": "6.4",
+          "label": "Cover priority line rendering attributes and marker output",
+          "evidence": {"kind": "modify_file", "value": "tests/test_app.py", "file_changes": [{"path": "tests/test_app.py", "action": "modify", "additions": 11, "deletions": 2}]}
+        },
+        {
+          "id": "6.5",
+          "label": "Cover highlighted-task JSON persistence",
+          "evidence": {"kind": "modify_file", "value": "tests/test_persistence.py", "file_changes": [{"path": "tests/test_persistence.py", "action": "modify", "additions": 2, "deletions": 1}]}
+        },
+        {
+          "id": "6.6",
+          "label": "Document priority highlighting and completion cleanup",
+          "evidence": {"kind": "modify_file", "value": "README.md", "file_changes": [{"path": "README.md", "action": "modify", "additions": 2, "deletions": 1}]}
+        },
+        {
+          "id": "6.7",
+          "label": "Verify priority behavior and Python compilation",
+          "children": [
+            {
+              "id": "6.7.1",
+              "label": "uv run pytest && uv run python -m compileall -q tree_todo",
+              "evidence": {"kind": "run_command", "value": "uv run pytest && uv run python -m compileall -q tree_todo", "result": "11 tests passed; compilation completed successfully"}
+            }
+          ]
+        },
+        {
+          "id": "6.8",
+          "label": "Inspect the final priority feature diff",
+          "children": [
+            {
+              "id": "6.8.1",
+              "label": "sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/atml-1.0.md && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/authoring-guide.md && git diff --numstat && git diff -- README.md tree_todo/model.py tree_todo/app.py tests/test_app.py tests/test_model.py tests/test_persistence.py && git status --short",
+              "evidence": {"kind": "inspect_diff", "value": "sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/atml-1.0.md && sed -n '1,260p' /home/balalida/.codex/skills/atml-update-traces/references/authoring-guide.md && git diff --numstat && git diff -- README.md tree_todo/model.py tree_todo/app.py tests/test_app.py tests/test_model.py tests/test_persistence.py && git status --short", "result": "Reviewed six modified feature files with attributable line statistics"}
+            }
+          ]
+        },
+        {
+          "id": "6.9",
+          "label": "Record the priority feature evidence map",
+          "evidence": {"kind": "modify_file", "value": "traces.json", "file_changes": [{"path": "traces.json", "action": "modify", "additions": null, "deletions": null}]}
         }
       ]
     }

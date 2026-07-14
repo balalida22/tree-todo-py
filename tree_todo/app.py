@@ -7,7 +7,7 @@ from .markdown import from_markdown, to_markdown
 from .model import TodoTree
 from .persistence import export_json, import_json, load, save
 
-HELP = "j/k move  h/l fold  space toggle  a/c/s add  e edit  d delete  J/K move  </> out/in  u/r undo/redo  i/x import/export  q quit"
+HELP = "j/k move  h/l fold  space done  p priority  a/c/s add  e edit  d delete  J/K move  </> out/in  u/r undo/redo  i/x import/export  q quit"
 
 class App:
     def __init__(self):
@@ -21,10 +21,10 @@ class App:
         target.append(self.tree.snapshot()); self.tree = TodoTree.restore(source.pop()); self.cursor = min(self.cursor, max(0, len(self.tree.visible()) - 1))
 
     @staticmethod
-    def _write(screen, row: int, text: str, width: int) -> None:
+    def _write(screen, row: int, text: str, width: int, attributes: int = 0) -> None:
         """Write a clipped line; curses raises if a resize invalidates a cell."""
         if width <= 0: return
-        try: screen.addnstr(row, 0, text, max(0, width - 1))
+        try: screen.addnstr(row, 0, text, max(0, width - 1), attributes)
         except curses.error: pass
 
     def prompt(self, screen, label: str) -> str:
@@ -58,7 +58,9 @@ class App:
             state = {"incomplete": "[ ]", "partial": "[-]", "complete": "[x]"}[item.task.state]
             branch = "▾ " if item.task.children and item.task.id in self.tree.expanded else "▸ " if item.task.children else "  "
             prefix = ">" if i == self.cursor else " "
-            self._write(screen, i + 1, f"{prefix}{'  ' * item.depth}{branch}{state} {item.task.title}", width)
+            priority = "!" if item.task.highlighted else " "
+            attributes = curses.A_BOLD | curses.A_REVERSE if item.task.highlighted else 0
+            self._write(screen, i + 1, f"{prefix}{priority}{'  ' * item.depth}{branch}{state} {item.task.title}", width, attributes)
         if height >= 2: self._write(screen, height - 1, HELP, width)
         try: screen.refresh()
         except curses.error: pass
@@ -80,6 +82,7 @@ class App:
             elif key == 'h' and selected: self.tree.expanded.discard(selected.task.id)
             elif key == 'l' and selected: self.tree.expanded.add(selected.task.id)
             elif key == ' ' and selected: self.mutate(lambda: self.tree.toggle(selected.task.id))
+            elif key == 'p' and selected: self.mutate(lambda: self.tree.toggle_highlight(selected.task.id))
             elif key == 'a':
                 if title := self.prompt(screen, "Root title: "): self.mutate(lambda: self.tree.add_root(title)); self.cursor = len(self.tree.visible()) - 1
             elif key in ('c', 's', 'e') and selected:

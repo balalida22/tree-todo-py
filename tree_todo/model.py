@@ -10,6 +10,7 @@ class Task:
     completed: bool = False
     children: list[Task] = field(default_factory=list)
     id: str = field(default_factory=lambda: str(uuid4()))
+    highlighted: bool = False
 
     @property
     def state(self) -> str:
@@ -20,13 +21,14 @@ class Task:
 
     def to_dict(self) -> dict:
         return {"id": self.id, "title": self.title, "completed": self.completed,
+                "highlighted": self.highlighted,
                 "children": [child.to_dict() for child in self.children]}
 
     @classmethod
     def from_dict(cls, value: dict) -> Task:
         return cls(value["title"], value.get("completed", False),
                    [cls.from_dict(child) for child in value.get("children", [])],
-                   value.get("id", str(uuid4())))
+                   value.get("id", str(uuid4())), value.get("highlighted", False))
 
 
 @dataclass(frozen=True)
@@ -95,6 +97,13 @@ class TodoTree:
         task = self.find(task_id)
         if not task or task.children: return
         task.completed = not task.completed
+        for candidate in self.walk():
+            if candidate.state == "complete": candidate.highlighted = False
+
+    def toggle_highlight(self, task_id: str) -> None:
+        task = self.find(task_id)
+        if not task or task.state == "complete": return
+        task.highlighted = not task.highlighted
 
     def move(self, task_id: str, direction: int) -> bool:
         items, index, _ = self.location(task_id); other = index + direction

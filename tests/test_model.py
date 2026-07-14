@@ -27,3 +27,15 @@ def test_partial_state_propagates_through_nested_parents():
     assert parent.state == root.state == "complete"
     tree.add_child(parent.id, "another leaf")
     assert parent.state == root.state == "partial"
+
+def test_highlight_can_be_cancelled_and_is_removed_when_finished():
+    tree = TodoTree(); task = tree.add_root("urgent")
+    tree.toggle_highlight(task.id); assert task.highlighted
+    tree.toggle_highlight(task.id); assert not task.highlighted
+    tree.toggle_highlight(task.id); tree.toggle(task.id)
+    assert task.state == "complete" and not task.highlighted
+
+def test_completed_parent_loses_highlight():
+    tree = TodoTree(); parent = tree.add_root("parent"); child = tree.add_child(parent.id, "child")
+    tree.toggle_highlight(parent.id); tree.toggle(child.id)
+    assert parent.state == "complete" and not parent.highlighted
